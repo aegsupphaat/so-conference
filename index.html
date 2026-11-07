@@ -1,0 +1,954 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Data</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        .page-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .page-view {
+            width: 100%;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .result-card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-top: 15px;
+            border-left: 5px solid #007bff;
+        }
+
+        .result-item {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 8px;
+        }
+
+        .result-item:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .result-label {
+            font-weight: bold;
+            color: #333;
+            display: inline-block;
+            width: 110px;
+        }
+
+        .result-value {
+            color: #007bff;
+            font-weight: 500;
+        }
+
+        /* Meeting buttons */
+/* กลุ่มปุ่ม Meeting */
+.meeting-buttons {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    margin-top: 20px;
+    align-items: stretch;
+}
+
+/* กล่องปุ่มทั้งสอง */
+.meeting-group {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ปุ่ม Meeting */
+.meeting-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 8px;
+
+    background-color: #28a745;
+    color: #ffffff !important;
+
+    border: none;
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.4;
+
+    white-space: nowrap;
+    opacity: 1;
+    visibility: visible;
+    box-sizing: border-box;
+}
+
+/* เมื่อเอาเมาส์วาง */
+.meeting-button:hover:not(:disabled) {
+    background-color: #218838;
+    color: #ffffff !important;
+}
+
+/* เมื่อ Disabled */
+.meeting-button:disabled {
+    background-color: #adb5bd;
+    color: #ffffff !important;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+/* วันที่ใต้ปุ่ม */
+.meeting-date {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 7px;
+    color: #555;
+}
+
+@media (max-width: 400px) {
+    .meeting-buttons {
+        gap: 8px;
+    }
+
+    .meeting-button {
+        font-size: 14px;
+    }
+}
+
+        .meeting-button:hover:not(:disabled) {
+            background-color: #218838;
+        }
+
+        .meeting-button:disabled {
+            background-color: #adb5bd;
+            color: #eeeeee;
+            cursor: not-allowed;
+        }
+
+        .meeting-date {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 7px;
+            color: #555;
+        }
+
+        #error {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* บังคับแสดงปุ่ม Meeting */
+.result-card .meeting-buttons {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 12px !important;
+    margin-top: 20px !important;
+}
+
+.result-card .meeting-group {
+    display: flex !important;
+    flex: 1 1 0 !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+}
+
+.result-card button.meeting-button {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    height: 55px !important;
+    min-height: 55px !important;
+
+    padding: 10px !important;
+    margin: 0 !important;
+
+    background: #28a745 !important;
+    color: #ffffff !important;
+
+    border: none !important;
+    border-radius: 6px !important;
+
+    font-size: 16px !important;
+    font-family: Arial, sans-serif !important;
+    font-weight: bold !important;
+
+    text-indent: 0 !important;
+    letter-spacing: normal !important;
+    line-height: normal !important;
+    text-transform: none !important;
+
+    white-space: nowrap !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+}
+
+/* บังคับแสดงข้อความภายในปุ่ม */
+.result-card button.meeting-button .meeting-button-text {
+    display: inline-block !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    text-indent: 0 !important;
+}
+
+/* Hover */
+.result-card button.meeting-button:hover:not(:disabled) {
+    background: #218838 !important;
+}
+
+/* Disabled */
+.result-card button.meeting-button:disabled {
+    background: #adb5bd !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    cursor: not-allowed !important;
+}
+
+/* วันที่ */
+.result-card .meeting-date {
+    display: block !important;
+    text-align: center !important;
+    font-size: 13px !important;
+    margin-top: 8px !important;
+    color: #555555 !important;
+}
+    </style>
+</head>
+
+<body>
+
+<div class="page-container">
+
+    <!-- PAGE 1: INPUT FORM -->
+    <div id="page-input" class="page-view">
+
+        <form class="form" id="form"
+              method="post"
+              autocomplete="off"
+              name="hello-sheet">
+
+            <div class="form-control">
+                <h2>กรุณาระบุชื่อและนามสกุลให้ถูกต้อง</h2>
+            </div>
+
+            <div class="form-control">
+                <label for="username">ชื่อ</label>
+                <input type="text"
+                       name="ชื่อ"
+                       id="username"
+                       placeholder="กรอก ชื่อ" />
+                <small></small>
+            </div>
+
+            <div class="form-control">
+                <label for="lastname">นามสกุล</label>
+                <input type="text"
+                       name="นามสกุล"
+                       id="lastname"
+                       placeholder="กรอก นามสกุล" />
+                <small></small>
+            </div>
+
+            <div class="form-button">
+                <button type="button" onclick="searchData()">
+                    ค้นหา
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+
+    <!-- PAGE 2: OUTPUT RESULT -->
+    <div id="page-output" class="page-view hidden">
+
+        <div class="form">
+
+            <div class="form-control">
+                <h2>ตรวจสอบข้อมูลของท่าน</h2>
+            </div>
+
+            <div id="infoDisplayContainer"></div>
+
+        </div>
+    </div>
+
+
+    <!-- STATUS MESSAGE -->
+    <div id="error"></div>
+
+</div>
+
+
+<script>
+
+// ==========================================
+// CONFIGURATION
+// ==========================================
+
+const scriptURL =
+"https://script.google.com/macros/s/AKfycbwPQBks-zZf6PVyrHdQjKdUm6Ka-3DazDeEhp91ire8_qXrDa44EzQ6WQREbBq_ROA7/exec";
+
+let globalEmployeeData = [];
+let selectedRowIndex = null;
+let isSavingOnBus = false;
+
+
+// ==========================================
+// MEETING DATE CONFIGURATION
+// ==========================================
+
+// รูปแบบวันที่ YYYY-MM-DD
+// เว้นว่างไว้ ('') = ปุ่ม Disabled
+
+const MEETING_1_DATE = "2026-11-06";
+const MEETING_1_TIME = "22:00:00";
+
+const MEETING_2_DATE = "2026-11-07";
+const MEETING_2_TIME = "10:30:00";
+
+
+// ตัวอย่างการกำหนดวันที่เพื่อเปิดใช้งานปุ่ม
+//
+// const MEETING_1_DATE = '2026-11-10';
+// const MEETING_2_DATE = '2026-11-15';
+
+
+// ==========================================
+// LOAD GOOGLE SHEET DATA
+// ==========================================
+
+window.addEventListener('DOMContentLoaded', () => {
+
+    const errorDiv = document.getElementById('error');
+
+    errorDiv.textContent = 'กำลังโหลดฐานข้อมูลจากระบบ...';
+    errorDiv.style.color = '#555';
+
+    fetch(scriptURL)
+
+        .then(response => response.json())
+
+        .then(response => {
+
+            if (response.status === 'success') {
+
+                globalEmployeeData = response.data;
+
+                errorDiv.textContent = 'ระบบพร้อมใช้งาน';
+                errorDiv.style.color = 'green';
+
+            } else {
+
+                errorDiv.textContent =
+                    'ไม่สามารถโหลดข้อมูลได้: ' + response.message;
+
+                errorDiv.style.color = 'red';
+            }
+
+        })
+
+        .catch(err => {
+
+            errorDiv.textContent =
+                'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์';
+
+            errorDiv.style.color = 'red';
+
+            console.error(err);
+
+        });
+
+});
+
+
+// ==========================================
+// HTML ESCAPE
+// ==========================================
+
+function escapeHtml(value) {
+
+    return String(value ?? '-').replace(/[&<>"']/g, function(char) {
+
+        const entities = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        };
+
+        return entities[char];
+
+    });
+
+}
+
+
+// ==========================================
+// SEARCH EMPLOYEE
+// ==========================================
+function isMeetingEnabled(meetingDate, meetingTime) {
+
+    // ตรวจสอบรูปแบบวันที่และเวลา
+    if (
+        !/^\d{4}-\d{2}-\d{2}$/.test(meetingDate) ||
+        !/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(meetingTime)
+    ) {
+        return false;
+    }
+
+    // เวลาปัจจุบันประเทศไทย
+    const now = new Date();
+
+    const bangkokNow = new Date(
+        now.toLocaleString('en-US', {
+            timeZone: 'Asia/Bangkok'
+        })
+    );
+
+    const currentDateTime =
+        bangkokNow.getFullYear() + '-' +
+        String(bangkokNow.getMonth() + 1).padStart(2, '0') + '-' +
+        String(bangkokNow.getDate()).padStart(2, '0') + ' ' +
+        String(bangkokNow.getHours()).padStart(2, '0') + ':' +
+        String(bangkokNow.getMinutes()).padStart(2, '0') + ':' +
+        String(bangkokNow.getSeconds()).padStart(2, '0');
+
+    const meetingDateTime = meetingDate + ' ' + meetingTime;
+
+    // ต้องเป็นวันเดียวกัน และถึงเวลาที่กำหนดแล้ว
+    return (
+        currentDateTime >= meetingDateTime &&
+        currentDateTime.substring(0, 10) === meetingDate
+    );
+}
+
+function searchData() {
+
+    const fnameInput = document.getElementById('username');
+    const lnameInput = document.getElementById('lastname');
+
+    const fname = fnameInput.value.trim().toLowerCase();
+    const lname = lnameInput.value.trim().toLowerCase();
+
+    const infoContainer =
+        document.getElementById('infoDisplayContainer');
+
+    const errorDiv = document.getElementById('error');
+
+    infoContainer.innerHTML = '';
+
+    errorDiv.textContent = '';
+
+    clearErrors(fnameInput);
+    clearErrors(lnameInput);
+
+    let hasError = false;
+
+    if (fname === '') {
+        showError(fnameInput, 'กรุณากรอก ชื่อ');
+        hasError = true;
+    }
+
+    if (lname === '') {
+        showError(lnameInput, 'กรุณากรอก นามสกุล');
+        hasError = true;
+    }
+
+    if (hasError) return;
+
+
+    // ตรวจสอบว่าข้อมูลโหลดเสร็จแล้วหรือยัง
+
+    if (globalEmployeeData.length === 0) {
+
+        errorDiv.textContent =
+            'กรุณารอสักครู่ ระบบกำลังโหลดข้อมูล';
+
+        errorDiv.style.color = 'red';
+
+        return;
+    }
+
+
+    errorDiv.textContent = 'กำลังค้นหาข้อมูล...';
+    errorDiv.style.color = '#555';
+
+
+    let foundRecord = null;
+
+
+    // SEARCH DATA
+
+    for (let i = 0; i < globalEmployeeData.length; i++) {
+
+        const person = globalEmployeeData[i];
+
+        const keys = Object.keys(person);
+
+        const fnameKey =
+            keys.find(k => k.trim().toLowerCase() === 'firstname')
+            || 'FirstName';
+
+        const lnameKey =
+            keys.find(k => k.trim().toLowerCase() === 'lastname')
+            || 'LastName';
+
+        const roomKey =
+            keys.find(k => k.trim().toLowerCase() === 'room')
+            || 'Room';
+
+        const mateKey =
+            keys.find(k => k.trim().toLowerCase() === 'room mate')
+            || 'Room Mate';
+
+        const busKey =
+            keys.find(k => k.trim().toLowerCase() === 'bus')
+            || 'Bus';
+const onBusKey = keys.find(k => k.trim().toLowerCase() === 'onbus') || 'OnBus';
+
+        const sheetFname =
+            String(person[fnameKey] || '').trim().toLowerCase();
+
+        const sheetLname =
+            String(person[lnameKey] || '').trim().toLowerCase();
+
+
+        if (
+            sheetFname.indexOf(fname) !== -1 &&
+            sheetLname.indexOf(lname) !== -1
+        ) {
+
+        foundRecord = {
+          firstName: person[fnameKey],
+          lastName: person[lnameKey],
+          room: person[roomKey],
+          roomMate: person[mateKey],
+          bus: person[busKey],
+          onBus: person[onBusKey],
+          meeting1: person[keys.find(k =>
+              k.trim().toLowerCase() === 'meeting1'
+          ) || 'Meeting1'],
+          meeting2: person[keys.find(k =>
+              k.trim().toLowerCase() === 'meeting2'
+          ) || 'Meeting2']
+};
+
+            selectedRowIndex = i + 2;
+
+            break;
+        }
+
+    }
+
+
+    // ======================================
+    // FOUND RECORD
+    // ======================================
+
+    if (foundRecord) {
+
+        errorDiv.textContent = '';
+
+        // ตรวจสอบวันที่ Meeting
+
+const meeting1Enabled =
+    isMeetingEnabled(MEETING_1_DATE, MEETING_1_TIME) &&
+    !foundRecord.meeting1;
+
+const meeting2Enabled =
+    isMeetingEnabled(MEETING_2_DATE, MEETING_2_TIME) &&
+    !foundRecord.meeting2;
+
+
+        // สร้าง Result Card
+
+        const cardHtml = `
+
+            <div class="result-card">
+
+                <div class="result-item">
+                    <span class="result-label">ชื่อ :</span>
+                    <span class="result-value">
+                        ${escapeHtml(foundRecord.firstName)}
+                    </span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">นามสกุล :</span>
+                    <span class="result-value">
+                        ${escapeHtml(foundRecord.lastName)}
+                    </span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">เลขที่ห้อง :</span>
+                    <span class="result-value">
+                        ${escapeHtml(foundRecord.room)}
+                    </span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">คู่นอน :</span>
+                    <span class="result-value">
+                        ${escapeHtml(foundRecord.roomMate)}
+                    </span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">รถบัสคันที่ :</span>
+                    <span class="result-value">
+                        ${escapeHtml(foundRecord.bus)}
+                    </span>
+                </div>
+
+
+                <!-- MEETING BUTTONS -->
+
+<div class="meeting-buttons">
+
+    <div class="meeting-group">
+
+        <button
+            type="button"
+            id="btnMeeting1"
+            class="meeting-button"
+            onclick="submitMeeting('Meeting1')"
+            ${meeting1Enabled ? '' : 'disabled'}
+        >
+            <span class="meeting-button-text">Meeting 1</span>
+        </button>
+
+<div class="meeting-date">
+    ${MEETING_1_DATE
+        ? MEETING_1_DATE + ' ' + MEETING_1_TIME
+        : 'ยังไม่กำหนดวันที่'}
+</div>
+
+    </div>
+
+    <div class="meeting-group">
+
+        <button
+            type="button"
+            id="btnMeeting2"
+            class="meeting-button"
+            onclick="submitMeeting('Meeting2')"
+            ${meeting2Enabled ? '' : 'disabled'}
+        >
+            <span class="meeting-button-text">Meeting 2</span>
+        </button>
+
+<div class="meeting-date">
+    ${MEETING_2_DATE
+        ? MEETING_2_DATE + ' ' + MEETING_2_TIME
+        : 'ยังไม่กำหนดวันที่'}
+</div>
+
+    </div>
+
+</div>
+
+            </div>
+
+        `;
+
+
+        infoContainer.innerHTML = cardHtml;
+
+
+        // SWITCH PAGE
+
+        document.getElementById('page-input')
+            .classList.add('hidden');
+
+        document.getElementById('page-output')
+            .classList.remove('hidden');
+
+
+        // SAVE ONBUS IMMEDIATELY
+
+const onBusValue = String(foundRecord.onBus ?? '').trim();
+
+if (onBusValue === '') {
+    markOnBus();
+} else {
+    errorDiv.textContent = '';
+}
+
+    }
+
+    // ======================================
+    // NOT FOUND
+    // ======================================
+
+    else {
+
+        errorDiv.textContent =
+            'ไม่พบข้อมูลบุคคลนี้ในระบบ';
+
+        errorDiv.style.color = 'red';
+
+        selectedRowIndex = null;
+
+    }
+
+}
+
+
+// ==========================================
+// SAVE OnBus TO GOOGLE SHEET
+// ==========================================
+
+function markOnBus() {
+
+    if (!selectedRowIndex || isSavingOnBus) return;
+
+    isSavingOnBus = true;
+
+    const errorDiv = document.getElementById('error');
+
+    errorDiv.textContent =
+        'กำลังบันทึกสถานะ OnBus...';
+
+    errorDiv.style.color = '#555';
+
+
+    fetch(scriptURL, {
+
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+
+        body: new URLSearchParams({
+
+            action: 'markOnBus',
+            rowIndex: selectedRowIndex
+
+        })
+
+    })
+
+    .then(response => response.json())
+
+    .then(result => {
+
+        if (result.status === 'success') {
+
+            errorDiv.textContent =
+                'บันทึกสถานะ OnBus เรียบร้อยแล้ว ✓';
+
+            errorDiv.style.color = 'green';
+
+        } else {
+
+            errorDiv.textContent =
+                'บันทึกไม่สำเร็จ: ' + result.message;
+
+            errorDiv.style.color = 'red';
+
+        }
+
+    })
+
+    .catch(error => {
+
+        errorDiv.textContent =
+            'เกิดข้อผิดพลาดในการบันทึก OnBus';
+
+        errorDiv.style.color = 'red';
+
+        console.error(error);
+
+    })
+
+    .finally(() => {
+
+        isSavingOnBus = false;
+
+    });
+
+}
+
+function submitMeeting(meetingName) {
+
+    if (!selectedRowIndex) return;
+
+    if (!['Meeting1', 'Meeting2'].includes(meetingName)) {
+        return;
+    }
+
+    const meetingDate = meetingName === 'Meeting1'
+        ? MEETING_1_DATE
+        : MEETING_2_DATE;
+
+const meetingTime = meetingName === 'Meeting1'
+    ? MEETING_1_TIME
+    : MEETING_2_TIME;
+
+if (!isMeetingEnabled(meetingDate, meetingTime)) return;
+
+    const buttonId = meetingName === 'Meeting1'
+        ? 'btnMeeting1'
+        : 'btnMeeting2';
+
+    const button = document.getElementById(buttonId);
+    const errorDiv = document.getElementById('error');
+
+    if (!button || button.disabled) return;
+
+    button.disabled = true;
+    button.textContent = 'กำลังบันทึก...';
+
+    errorDiv.textContent = 'กำลังบันทึก ' + meetingName + '...';
+    errorDiv.style.color = '#555';
+
+    fetch(scriptURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            action: 'markMeeting',
+            meetingName: meetingName,
+            rowIndex: selectedRowIndex
+        })
+    })
+
+    .then(response => response.json())
+
+    .then(result => {
+
+        if (result.status === 'success' ||
+            result.status === 'already_stamped') {
+
+            // ล็อกปุ่มถาวรสำหรับ Record นี้
+            button.disabled = true;
+
+            button.innerHTML =
+                '<span class="meeting-button-text">✓ ' +
+                (meetingName === 'Meeting1' ? 'Meeting 1' : 'Meeting 2') +
+                '</span>';
+
+            button.style.backgroundColor = '#6c757d';
+
+            errorDiv.textContent =
+                result.status === 'success'
+                    ? 'บันทึก ' + meetingName + ' สำเร็จ: ' + result.date
+                    : meetingName + ' มีการบันทึกไปแล้ว ไม่สามารถบันทึกซ้ำได้';
+
+            errorDiv.style.color = 'green';
+
+        } else {
+
+            button.disabled = false;
+
+            button.innerHTML =
+                '<span class="meeting-button-text">' +
+                (meetingName === 'Meeting1' ? 'Meeting 1' : 'Meeting 2') +
+                '</span>';
+
+            errorDiv.textContent =
+                'บันทึกไม่สำเร็จ: ' + result.message;
+
+            errorDiv.style.color = 'red';
+
+        }
+
+    })
+
+    .catch(error => {
+
+        // กรณีไม่ทราบผลการบันทึก
+        // ให้คงปุ่ม Disabled ไว้ก่อนเพื่อป้องกันการกดซ้ำ
+
+        button.disabled = true;
+
+        errorDiv.textContent =
+            'ไม่สามารถตรวจสอบผลการบันทึกได้ กรุณาค้นหาข้อมูลใหม่';
+
+        errorDiv.style.color = 'red';
+
+        console.error(error);
+
+    });
+
+}
+// ==========================================
+// VALIDATION
+// ==========================================
+
+function showError(input, message) {
+
+    const formControl = input.parentElement;
+
+    formControl.className = 'form-control error';
+
+    const small = formControl.querySelector('small');
+
+    if (small) {
+
+        small.innerText = message;
+        small.style.color = 'red';
+
+    }
+
+}
+
+
+function clearErrors(input) {
+
+    const formControl = input.parentElement;
+
+    formControl.className = 'form-control';
+
+    const small = formControl.querySelector('small');
+
+    if (small) {
+
+        small.innerText = '';
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
