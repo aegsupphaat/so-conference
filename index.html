@@ -45,13 +45,22 @@
             margin-bottom: 0;
             padding-bottom: 0;
         }
-
+/*
         .result-label {
             font-weight: bold;
             color: #333;
             display: inline-block;
             width: 110px;
         }
+            */
+.result-label {
+    font-weight: bold;
+    color: #333;
+    display: inline-block;
+    width: 145px;
+    white-space: nowrap;
+    vertical-align: top;
+}            
 
         .result-value {
             color: #007bff;
@@ -299,7 +308,7 @@
         <div class="form">
 
             <div class="form-control">
-                <h2>ตรวจสอบข้อมูลของท่าน</h2>
+                <h2>SO Conference 2026 : The Next Gen "SALE OPERATION & AI"</h2>
             </div>
 
             <div id="infoDisplayContainer"></div>
@@ -322,7 +331,7 @@
 // ==========================================
 
 const scriptURL =
-"https://script.google.com/macros/s/AKfycbwPQBks-zZf6PVyrHdQjKdUm6Ka-3DazDeEhp91ire8_qXrDa44EzQ6WQREbBq_ROA7/exec";
+"https://script.google.com/macros/s/AKfycbxrsV8aaiPuCaCah4HgEnCxFI-LMlcZcoOeHFDwt7jTB_GuJ-ZX4itn5tclNVSlKEn8/exec";
 
 let globalEmployeeData = [];
 let selectedRowIndex = null;
@@ -522,6 +531,7 @@ function searchData() {
 
         const keys = Object.keys(person);
 
+        /*
         const fnameKey =
             keys.find(k => k.trim().toLowerCase() === 'firstname')
             || 'FirstName';
@@ -529,45 +539,51 @@ function searchData() {
         const lnameKey =
             keys.find(k => k.trim().toLowerCase() === 'lastname')
             || 'LastName';
+        */
+       
+        const fullNameKey =
+            keys.find(k => k.trim().toLowerCase() === 'name')
+            || 'Name';
 
         const roomKey =
-            keys.find(k => k.trim().toLowerCase() === 'room')
-            || 'Room';
+            keys.find(k => k.trim().toLowerCase() === 'room no.')
+            || 'Room No.';
 
-        const mateKey =
-            keys.find(k => k.trim().toLowerCase() === 'room mate')
-            || 'Room Mate';
+        const outboundBusKey =
+            keys.find(k => k.trim().toLowerCase() === 'outbound bus')
+            || 'Outbound bus';
 
-        const busKey =
-            keys.find(k => k.trim().toLowerCase() === 'bus')
-            || 'Bus';
-const onBusKey = keys.find(k => k.trim().toLowerCase() === 'onbus') || 'OnBus';
+        const inboundBusKey =
+            keys.find(k => k.trim().toLowerCase() === 'inbound bus')
+            || 'Inbound bus';
 
-        const sheetFname =
-            String(person[fnameKey] || '').trim().toLowerCase();
+        const dropoffPointKey =
+            keys.find(k => k.trim().toLowerCase() === 'drop-off point')
+            || 'Drop-off point';
 
-        const sheetLname =
-            String(person[lnameKey] || '').trim().toLowerCase();
+const onBusKey = keys.find(k => k.trim().toLowerCase() === 'check-in') || 'Check-in';
 
 
-        if (
-            sheetFname.indexOf(fname) !== -1 &&
-            sheetLname.indexOf(lname) !== -1
-        ) {
+const sheetFullName =
+    String(person[fullNameKey] || '').trim().toLowerCase();
+
+if (
+    sheetFullName === (fname + ' ' + lname)
+) {
 
         foundRecord = {
-          firstName: person[fnameKey],
-          lastName: person[lnameKey],
-          room: person[roomKey],
-          roomMate: person[mateKey],
-          bus: person[busKey],
-          onBus: person[onBusKey],
+            fullName: person[fullNameKey],
+            room: person[roomKey],
+            outboundbus: person[outboundBusKey],
+            inboundbus: person[inboundBusKey],
+            dropoffPoint: person[dropoffPointKey],
+            onBus: person[onBusKey],
           meeting1: person[keys.find(k =>
-              k.trim().toLowerCase() === 'meeting1'
-          ) || 'Meeting1'],
+              k.trim().toLowerCase() === 'seminar check-in 1'
+          ) || 'Seminar Check-in 1'],
           meeting2: person[keys.find(k =>
-              k.trim().toLowerCase() === 'meeting2'
-          ) || 'Meeting2']
+              k.trim().toLowerCase() === 'seminar check-in 2'
+          ) || 'Seminar Check-in 2']
 };
 
             selectedRowIndex = i + 2;
@@ -588,14 +604,26 @@ const onBusKey = keys.find(k => k.trim().toLowerCase() === 'onbus') || 'OnBus';
 
         // ตรวจสอบวันที่ Meeting
 
+const now = new Date();
+
+const meeting1Start = new Date(
+    MEETING_1_DATE + 'T' + MEETING_1_TIME + '+07:00'
+);
+
+const meeting2Start = new Date(
+    MEETING_2_DATE + 'T' + MEETING_2_TIME + '+07:00'
+);
+
+// Seminar 1
 const meeting1Enabled =
-    isMeetingEnabled(MEETING_1_DATE, MEETING_1_TIME) &&
+    now >= meeting1Start &&
+    now < meeting2Start &&
     !foundRecord.meeting1;
 
+// Seminar 2
 const meeting2Enabled =
-    isMeetingEnabled(MEETING_2_DATE, MEETING_2_TIME) &&
+    now >= meeting2Start &&
     !foundRecord.meeting2;
-
 
         // สร้าง Result Card
 
@@ -604,16 +632,9 @@ const meeting2Enabled =
             <div class="result-card">
 
                 <div class="result-item">
-                    <span class="result-label">ชื่อ :</span>
+                    <span class="result-label">ชื่อ-สกุล :</span>
                     <span class="result-value">
-                        ${escapeHtml(foundRecord.firstName)}
-                    </span>
-                </div>
-
-                <div class="result-item">
-                    <span class="result-label">นามสกุล :</span>
-                    <span class="result-value">
-                        ${escapeHtml(foundRecord.lastName)}
+                        ${escapeHtml(foundRecord.fullName)}
                     </span>
                 </div>
 
@@ -625,16 +646,23 @@ const meeting2Enabled =
                 </div>
 
                 <div class="result-item">
-                    <span class="result-label">คู่นอน :</span>
+                    <span class="result-label">รถบัสขาไป :</span>
                     <span class="result-value">
-                        ${escapeHtml(foundRecord.roomMate)}
+                        ${escapeHtml(foundRecord.outboundbus)}
                     </span>
                 </div>
 
                 <div class="result-item">
-                    <span class="result-label">รถบัสคันที่ :</span>
+                    <span class="result-label">รถบัสขากลับ :</span>
                     <span class="result-value">
-                        ${escapeHtml(foundRecord.bus)}
+                        ${escapeHtml(foundRecord.inboundbus)}
+                    </span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">จุดลงรถขากลับ :</span>
+                    <span class="result-value">
+                        ${escapeHtml(foundRecord.dropoffPoint)}
                     </span>
                 </div>
 
@@ -652,7 +680,7 @@ const meeting2Enabled =
             onclick="submitMeeting('Meeting1')"
             ${meeting1Enabled ? '' : 'disabled'}
         >
-            <span class="meeting-button-text">Meeting 1</span>
+            <span class="meeting-button-text">Seminar Check-in 1</span>
         </button>
 
 <div class="meeting-date">
@@ -672,7 +700,7 @@ const meeting2Enabled =
             onclick="submitMeeting('Meeting2')"
             ${meeting2Enabled ? '' : 'disabled'}
         >
-            <span class="meeting-button-text">Meeting 2</span>
+            <span class="meeting-button-text">Seminar Check-in 2</span>
         </button>
 
 <div class="meeting-date">
@@ -745,7 +773,7 @@ function markOnBus() {
     const errorDiv = document.getElementById('error');
 
     errorDiv.textContent =
-        'กำลังบันทึกสถานะ OnBus...';
+        'กำลังบันทึกสถานะ Check-in...';
 
     errorDiv.style.color = '#555';
 
@@ -774,7 +802,7 @@ function markOnBus() {
         if (result.status === 'success') {
 
             errorDiv.textContent =
-                'บันทึกสถานะ OnBus เรียบร้อยแล้ว ✓';
+                'Check-in เรียบร้อยแล้ว ✓';
 
             errorDiv.style.color = 'green';
 
@@ -792,7 +820,7 @@ function markOnBus() {
     .catch(error => {
 
         errorDiv.textContent =
-            'เกิดข้อผิดพลาดในการบันทึก OnBus';
+            'เกิดข้อผิดพลาดในการบันทึก Check-in';
 
         errorDiv.style.color = 'red';
 
@@ -808,6 +836,7 @@ function markOnBus() {
 
 }
 
+
 function submitMeeting(meetingName) {
 
     if (!selectedRowIndex) return;
@@ -816,15 +845,28 @@ function submitMeeting(meetingName) {
         return;
     }
 
-    const meetingDate = meetingName === 'Meeting1'
-        ? MEETING_1_DATE
-        : MEETING_2_DATE;
+    const now = new Date();
 
-const meetingTime = meetingName === 'Meeting1'
-    ? MEETING_1_TIME
-    : MEETING_2_TIME;
+    const meeting1Start = new Date(
+        MEETING_1_DATE + 'T' + MEETING_1_TIME + '+07:00'
+    );
 
-if (!isMeetingEnabled(meetingDate, meetingTime)) return;
+    const meeting2Start = new Date(
+        MEETING_2_DATE + 'T' + MEETING_2_TIME + '+07:00'
+    );
+
+    // ตรวจสอบเวลาของแต่ละ Seminar
+    if (meetingName === 'Meeting1') {
+        if (now < meeting1Start || now >= meeting2Start) {
+            return;
+        }
+    }
+
+    if (meetingName === 'Meeting2') {
+        if (now < meeting2Start) {
+            return;
+        }
+    }
 
     const buttonId = meetingName === 'Meeting1'
         ? 'btnMeeting1'
@@ -835,10 +877,14 @@ if (!isMeetingEnabled(meetingDate, meetingTime)) return;
 
     if (!button || button.disabled) return;
 
+    const originalText = meetingName === 'Meeting1'
+        ? 'Seminar Check-in 1'
+        : 'Seminar Check-in 2';
+
     button.disabled = true;
     button.textContent = 'กำลังบันทึก...';
 
-    errorDiv.textContent = 'กำลังบันทึก ' + meetingName + '...';
+    errorDiv.textContent = 'กำลังบันทึก ' + originalText;
     errorDiv.style.color = '#555';
 
     fetch(scriptURL, {
@@ -857,53 +903,45 @@ if (!isMeetingEnabled(meetingDate, meetingTime)) return;
 
     .then(result => {
 
-        if (result.status === 'success' ||
-            result.status === 'already_stamped') {
+        if (
+            result.status === 'success' ||
+            result.status === 'already_stamped'
+        ) {
 
-            // ล็อกปุ่มถาวรสำหรับ Record นี้
             button.disabled = true;
 
             button.innerHTML =
                 '<span class="meeting-button-text">✓ ' +
-                (meetingName === 'Meeting1' ? 'Meeting 1' : 'Meeting 2') +
+                originalText +
                 '</span>';
-
-            button.style.backgroundColor = '#6c757d';
 
             errorDiv.textContent =
                 result.status === 'success'
-                    ? 'บันทึก ' + meetingName + ' สำเร็จ: ' + result.date
-                    : meetingName + ' มีการบันทึกไปแล้ว ไม่สามารถบันทึกซ้ำได้';
+                    ? 'บันทึก ' + originalText + ' สำเร็จ: ' + result.date
+                    : originalText + ' มีการบันทึกไปแล้ว';
 
             errorDiv.style.color = 'green';
 
         } else {
 
             button.disabled = false;
-
-            button.innerHTML =
-                '<span class="meeting-button-text">' +
-                (meetingName === 'Meeting1' ? 'Meeting 1' : 'Meeting 2') +
-                '</span>';
+            button.textContent = originalText;
 
             errorDiv.textContent =
                 'บันทึกไม่สำเร็จ: ' + result.message;
 
             errorDiv.style.color = 'red';
-
         }
 
     })
 
     .catch(error => {
 
-        // กรณีไม่ทราบผลการบันทึก
-        // ให้คงปุ่ม Disabled ไว้ก่อนเพื่อป้องกันการกดซ้ำ
-
-        button.disabled = true;
+        button.disabled = false;
+        button.textContent = originalText;
 
         errorDiv.textContent =
-            'ไม่สามารถตรวจสอบผลการบันทึกได้ กรุณาค้นหาข้อมูลใหม่';
+            'เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่';
 
         errorDiv.style.color = 'red';
 
@@ -912,6 +950,7 @@ if (!isMeetingEnabled(meetingDate, meetingTime)) return;
     });
 
 }
+
 // ==========================================
 // VALIDATION
 // ==========================================
