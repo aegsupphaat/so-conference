@@ -773,10 +773,14 @@ const meeting2Start = new Date(
 );
 
 // Seminar 1
+/*
 const meeting1Enabled =
     now >= meeting1Start &&
     now < meeting2Start &&
     !foundRecord.meeting1;
+*/
+const meeting1Enabled =
+    now < meeting1Start;
 
 // Seminar 2
 const meeting2Enabled =
